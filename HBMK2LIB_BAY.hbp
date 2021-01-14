@@ -1,0 +1,12 @@
+-hblib
+
+# Include section
+-i.\include
+
+#-shared
+-mt
+-inc
+-workdir=..\TEMP
+-oFunLib_HBT.lib
+
+TBox.prg
