@@ -1,6 +1,7 @@
 #include 'hbclass.ch'
 #include 'common.ch'
 #include 'property.ch'
+#include 'tbox.ch'
 
 // класс описания оконной области
 CREATE CLASS TBox
@@ -236,15 +237,19 @@ METHOD PROCEDURE View()  CLASS TBox
 	@ ::FTop, ::FLeft clear to ::FBottom, ::FRight
 	
 	do case
-		case ::FFrame == 0
-			// без рамки
-		case ::FFrame == 1  // одинарная рамка по краю
+		// case ::FFrame == 0 	// без рамки
+		case ::FFrame == BORDER_NONE 	// без рамки
+		// case ::FFrame == 1  // одинарная рамка по краю
+		case ::FFrame == BORDER_SINGLE  // одинарная рамка по краю
 			@ ::FTop, ::FLeft TO ::FBottom, ::FRight
-		case ::FFrame == 2  // двойная рамка по краю
+		// case ::FFrame == 2  // двойная рамка по краю
+		case ::FFrame == BORDER_DOUBLE  // двойная рамка по краю
 			@ ::FTop, ::FLeft TO ::FBottom, ::FRight double
-		case ::FFrame == 3  // одинарная рамка со сдвигом
+		// case ::FFrame == 3  // одинарная рамка со сдвигом
+		case ::FFrame == BORDER_SINGLE_SHIFT  // одинарная рамка со сдвигом
 			@ ::FTop, ::FLeft + 1 TO ::FBottom, ::FRight - 1
-		case ::FFrame == 4  // двойная рамка со сдвигом
+		// case ::FFrame == 4  // двойная рамка со сдвигом
+		case ::FFrame == BORDER_DOUBLE_SHIFT  // двойная рамка со сдвигом
 			@ ::FTop, ::FLeft + 1 TO ::FBottom, ::FRight - 1 double
 	endcase
 	if ::FCaption != ''
