@@ -4,6 +4,6 @@
 -i.\include
 
 -workdir=..\TEMP
--oFunLib_HBT.lib
+-oFunLib.lib
 
 TBox.prg
