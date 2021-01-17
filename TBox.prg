@@ -22,6 +22,7 @@ CREATE CLASS TBox
 		
 		METHOD New( nTop, nLeft, nBottom, nRight, lShadow )
 		METHOD View()
+		METHOD Clear()
 	HIDDEN:
 		
 		DATA FTop			INIT 0
@@ -206,6 +207,11 @@ METHOD New( nTop, nLeft, nBottom, nRight, lShadow )  CLASS TBox
 	::FRight	:= if( valtype( nRight ) == 'N', nRight, 0 )
 	::FShadow	:= if( valtype( lShadow ) == 'L', lShadow, .f. )
 	return self
+
+METHOD procedure Clear() CLASS TBox
+
+	@ ::FTop, ::FLeft clear to ::FBottom, ::FRight
+	return
 
 METHOD PROCEDURE View()  CLASS TBox
 	local tmp
