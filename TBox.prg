@@ -85,7 +85,7 @@ CREATE CLASS TBox
 END CLASS
 
 METHOD function getWidth 		 CLASS TBox
-return ::FRight - ::FLeft + 1
+return ::FRight - ::FLeft
 
 METHOD function getHeight 		 CLASS TBox
 	return ::FBottom - ::FTop + 1
