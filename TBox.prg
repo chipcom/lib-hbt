@@ -19,6 +19,9 @@ CREATE CLASS TBox
 		PROPERTY Save READ getSave WRITE setSave
 		PROPERTY MessageLine AS ARRAY WRITE setMessageLine
 		PROPERTY HasMessageLine AS LOGICAL READ getHasMessageLine
+		PROPERTY Visible AS LOGICAL READ getVisible
+		PROPERTY Height AS NUMERIC READ getHeight
+		PROPERTY Width AS NUMERIC READ getWidth
 		
 		METHOD New( nTop, nLeft, nBottom, nRight, lShadow )
 		METHOD View()
@@ -67,6 +70,9 @@ CREATE CLASS TBox
 		METHOD getSave
 		METHOD setSave( lValue )
 		METHOD getHasMessageLine
+		METHOD getVisible
+		METHOD getHeight
+		METHOD getWidth
 		
 		METHOD statusBar( cStr, cColor1, cColor2 )
 		
@@ -77,6 +83,15 @@ CREATE CLASS TBox
 		DESTRUCTOR  __My_dtor
 		
 END CLASS
+
+METHOD function getWidth 		 CLASS TBox
+return ::FRight - ::FLeft + 1
+
+METHOD function getHeight 		 CLASS TBox
+	return ::FBottom - ::FTop + 1
+
+METHOD function getVisible 		 CLASS TBox
+	return ::_isView
 
 METHOD PROCEDURE setMessageLine( param ) 		 CLASS TBox
 
