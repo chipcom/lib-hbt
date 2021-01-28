@@ -62,48 +62,87 @@ return ret
 /*
     AsString
 */
-function AsString( xVal )
+function AsString( xVal, descript )
 
    LOCAL result
+   local tmp
 
    switch ValType( xVal )
    case 'C'
-      return xVal
-   case 'D'
-      // return FDateS( xVal )
-      if empty( xVal )
-         return '  /   /    '
+      if ! empty(descript)
+         return descript + " (Char): " + xVal
+      else
+         return xVal
       endif
-      return str( day( xVal ), 2 ) + '/' + left( cmonth( xVal ), 3 ) + '/' + str( year( xVal ), 4 )
+   case 'D'
+      if empty( xVal )
+         tmp := '  /   /    '
+      else
+         tmp := str( day( xVal ), 2 ) + '/' + left( cmonth( xVal ), 3 ) + '/' + str( year( xVal ), 4 )
+      endif
+      if ! empty(descript)
+         return descript + " (Date): " + tmp
+      else
+         return tmp
+      endif
    case 'B'
-      return '{|| ... }'
+      tmp := '{|| ... }'
+      if ! empty(descript)
+         return descript + " (BlockCode): " + tmp
+      else
+         return tmp
+      endif
    case 'L'
-      return iif( xVal, '.T.', '.F.' )
+      tmp := iif( xVal, '.T.', '.F.' )
+      if ! empty(descript)
+         return descript + " (Logical): " + tmp
+      else
+         return tmp
+      endif
    case 'N'
-      return ltrim( str( xVal ) )
+      tmp := ltrim( str( xVal ) )
+      if ! empty(descript)
+         return descript + " (Numeric): " + tmp
+      else
+         return tmp
+      endif
    case 'O'
       BEGIN SEQUENCE WITH {| oErr| break( oErr ) }
          if xVal:IsDerivedFrom( 'TTime' )
-            result := xVal:AsString
+            tmp := xVal:AsString
          else
-            result := '<Object>: ' + xVal:ClassName
+            tmp := '<Object>: ' + xVal:ClassName
          endif
       RECOVER
-         result := '<Object Not Valid>'
+         tmp := '<Object Not Valid>'
       END SEQUENCE
-      return result
+      if ! empty(descript)
+         return descript + " (Object): " + tmp
+      else
+         return tmp
+      endif
    case 'A'
-      return '<Array>: ' + LTrim( Str( Len( xVal ) ) )
+      tmp := '<Array>: ' + LTrim( Str( Len( xVal ) ) )
+      if ! empty(descript)
+         return descript + " (Array): " + tmp
+      else
+         return tmp
+      endif
    case 'T'
-      return hb_tToC( xVal )
+      tmp := hb_tToC( xVal )
+      if ! empty(descript)
+         return descript + " (Numeric): " + tmp
+      else
+         return tmp
+      endif
    endswitch
    return ''
 
-function AlertX( param, len, dec )
+function AlertX( param, descript )
 	
-	HB_Default( @len, 0 ) 
-	HB_Default( @dec, 0 ) 
-	alert( AsString( param ) )
+	HB_Default( @descript, "" ) 
+	// HB_Default( @dec, 0 ) 
+	alert( AsString( param, descript ) )
 	return nil
 
 function AlertXList( param )
