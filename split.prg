@@ -3,19 +3,20 @@
 
 // Разделить строку s на все подстроки, разделенные sep,
 // и вернуть массив подстрок между этими разделителями.
-// по умолчанию sep - ","
+// по умолчанию sep - "пробел"
 Function Split(s, sep)
   // s - разделяемая строка
   // sep - строка разделитель
   Local i
-  local arr := {}
+  local arr := {}, sTmp := ''
 
-	hb_defaultvalue( sep, ',' )
+	hb_defaultvalue( sep, ' ' )
 
   for i := 1 to numtoken(s, sep)
-    s := alltrim(token(s, sep, i))
-    if !empty(s)
-      aadd(arr,s)
+    sTmp := alltrim(token(s, sep, i))
+alertx(sTmp, 'result')
+    if !empty(sTmp)
+      aadd(arr,sTmp)
     endif
   next
   // sDiagnozis := aclone(ar) // заменим строковое представление диагнозов массивом диагнозов

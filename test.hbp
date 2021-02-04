@@ -1,0 +1,18 @@
+-L..\LIB
+# -lMyLib_HBT
+-lFunLib
+
+-lhbxpp
+-lhbct
+-lhbwin
+-lxhb
+-lhbmzip
+-lminizip
+-gui
+-gtwvg
+-mt
+#-compr=yes
+-workdir=C:\TEMP
+-otest
+
+test.prg
