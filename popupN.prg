@@ -266,7 +266,7 @@ FUNCTION popupN(nTop, nLeft, nBottom, nRight, aArray, nInd, col,;
 *****
 Function fmenu_readerN(nKey,i)
   do case
-    case nKey == K_INS
+    case nKey == K_INS .or. nKey == K_SPACE
       if parr[i, 2] //lArray[i]
         parr[i, 1] := stuff(parr[i, 1],2,1,if("*" == substr(parr[i, 1],2,1)," ","*"))
         keyboard chr(K_TAB)
