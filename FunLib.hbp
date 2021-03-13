@@ -11,3 +11,5 @@ popupN.prg
 xtoc.prg
 arr2SlistN.prg
 split.prg
+settingsSystem.prg
+TSettingSystem.prg
