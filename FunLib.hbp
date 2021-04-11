@@ -1,7 +1,7 @@
 -hblib
 
 # Include section
--i.\include
+-i..\include
 
 -workdir=..\TEMP
 -oFunLib.lib
@@ -13,3 +13,4 @@ arr2SlistN.prg
 split.prg
 settingsSystem.prg
 TSettingSystem.prg
+splitStrToArray.prg
