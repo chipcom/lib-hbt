@@ -3,15 +3,16 @@
 # Include section
 -i..\include
 
--workdir=..\TEMP
+-workdir=C:\TEMP
 -oFunLib.lib
 
-TBox.prg
+settingsSystem.prg
+TSettingSystem.prg
 popupN.prg
+
+TBox.prg
 xtoc.prg
 arr2SlistN.prg
 split.prg
-settingsSystem.prg
-TSettingSystem.prg
 splitStrToArray.prg
 dateInRange.prg
