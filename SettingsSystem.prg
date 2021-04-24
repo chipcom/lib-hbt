@@ -1,9 +1,9 @@
 
 #include 'inkey.ch'
 #include 'setcurs.ch'
-#include "../include/function.ch"
-#include "../include/edit_spr.ch"
-#include '../include/chip_mo.ch'
+#include 'function.ch'
+#include 'edit_spr.ch'
+#include 'chip_mo.ch'
 
 function settingsSystem()
 	static mm_da_net := { { 'да ', 1 }, { 'нет', 2 } }

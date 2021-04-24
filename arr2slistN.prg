@@ -1,5 +1,5 @@
-#include "../_mylib_hbt/function.ch"
-#include "inkey.ch"
+#include 'function.ch'
+#include 'inkey.ch'
 
 Function arr2SlistN(arr)
   Local i, sList := ""

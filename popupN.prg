@@ -1,8 +1,8 @@
-#include "../_mylib_hbt/edit_spr.ch"
-#include "../_mylib_hbt/function.ch"
-#include "inkey.ch"
+#include 'edit_spr.ch'
+#include 'function.ch'
+#include 'inkey.ch'
 
-#include './INCLUDE/tbox.ch'
+#include 'tbox.ch'
 
 ***** вертикальное меню
 FUNCTION popupN(nTop, nLeft, nBottom, nRight, aArray, nInd, col,;
