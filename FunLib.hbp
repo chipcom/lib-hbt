@@ -10,6 +10,7 @@ settingsSystem.prg
 TSettingSystem.prg
 popupN.prg
 
+TRecord.prg
 TBox.prg
 xtoc.prg
 arr2SlistN.prg

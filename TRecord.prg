@@ -2,7 +2,8 @@
 // Modificada sobre la clase proporcionada por Marcelo Via Giglio en http://forums.fivetechsupport.com/viewtopic.php?f=6&t=34402
 //
 
-#include "FIVEWIN.CH"
+// #include "FIVEWIN.CH"
+#include 'hbclass.ch'
 
 CLASS TRecord
 
@@ -17,7 +18,7 @@ CLASS TRecord
    METHOD loadFromAlias( cAlias )
    METHOD saveToAlias( cAlias )
    METHOD blankFromAlias( cAlias )
-   METHOD show()
+   // METHOD show()
    ERROR HANDLER OnError( cMsg, nError )
 
 ENDCLASS
@@ -113,12 +114,12 @@ METHOD saveToAlias( cAlias )
    RETURN NIL
 
 // ------------------------------------------------------------------------------
-METHOD show()
+// METHOD show()
 
-   // ------------------------------------------------------------------------------
-   LOCAL a := {}
+//    // ------------------------------------------------------------------------------
+//    LOCAL a := {}
 
-   AEval( ::AFIELDS, {| b, i| AAdd( a, { ::AFIELDS[ i ], ::aData[ i ] } ) } )
-   xBrowse( a )
+//    AEval( ::AFIELDS, {| b, i| AAdd( a, { ::AFIELDS[ i ], ::aData[ i ] } ) } )
+//    xBrowse( a )
 
-   RETURN NIL
+//    RETURN NIL
