@@ -17,3 +17,4 @@ arr2SlistN.prg
 split.prg
 splitStrToArray.prg
 dateInRange.prg
+maxLenStringInArray.prg
