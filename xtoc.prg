@@ -122,7 +122,8 @@ function AsString( xVal, descript )
          return tmp
       endif
    case 'A'
-      tmp := '<Array>: ' + LTrim( Str( Len( xVal ) ) )
+      // tmp := '<Array>: ' + LTrim( Str( Len( xVal ) ) )
+      tmp := '<Array>: ' + hb_ValToExp( xVal )
       if ! empty(descript)
          return descript + " (Array): " + tmp
       else
