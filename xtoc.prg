@@ -136,7 +136,14 @@ function AsString( xVal, descript )
       else
          return tmp
       endif
-   endswitch
+   case 'U'
+         tmp := 'NIL'
+         if ! empty(descript)
+            return descript + " (Undefined): " + tmp
+         else
+            return tmp
+         endif
+      endswitch
    return ''
 
 function AlertX( param, descript )
