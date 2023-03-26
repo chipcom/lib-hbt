@@ -18,3 +18,4 @@ split.prg
 splitStrToArray.prg
 dateInRange.prg
 maxLenStringInArray.prg
+TFileText.prg
