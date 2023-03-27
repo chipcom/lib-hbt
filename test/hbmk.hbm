@@ -1,0 +1,25 @@
+-i..\..\include
+
+-L..\..\LIB
+-lMyLib_HBT
+-lFunLib
+-lhblibxlsxwriter
+
+-lhbxpp
+-lhbct
+-lhbwin
+-lxhb
+-lhbmzip
+-lminizip
+-gui
+-gtwvg
+
+hbtip.hbc
+hbziparc.hbc
+hbsqlit3.hbc
+
+-mt
+
+#-w3 -es2
+
+#hbct.hbc
