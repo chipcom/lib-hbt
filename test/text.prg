@@ -1,3 +1,4 @@
+#include 'tfile.ch'
 
 
 procedure main( ... )
@@ -20,8 +21,20 @@ procedure main( ... )
 
 
   ft := TFileText():New('test.txt', , .t., , .t.)
-  for i := 1 to 100
-    ft:add_string('test ' + alltrim(str(i,3)))
+  for i := 1 to 200
+    if i == 100
+      ft:add_string('test ' + alltrim(str(i,3)), FILE_CENTER, '=')
+    elseif i == 110
+      ft:add_string('test ' + alltrim(str(i,3)), FILE_RIGHT, '+')
+    else
+      ft:add_string('test ' + alltrim(str(i,3)))
+    endif
+    if i == 61
+      ft:Heigh := 10
+    endif
+    if i == 91
+      ft:PageBreak := .f.
+    endif
   next
 
   return
