@@ -9,10 +9,14 @@ CREATE CLASS TFileText
   VISIBLE:
     PROPERTY Heigh READ getHeigh WRITE setHeigh
     PROPERTY Width READ getWidth WRITE setWidth
-    PROPERTY PageBreak READ getPageBreak WRITE setPageBreak
+    PROPERTY EnablePageBreak READ getPageBreak WRITE setPageBreak
+    PROPERTY TableHeader WRITE setTableHeader
+    PROPERTY EnableTableHeader READ getEnableTableHeader WRITE setEnableTableHeader
 
     METHOD New( NameFile, width, page_break, high, num_page ) CONSTRUCTOR
-    METHOD add_string( str )
+    METHOD add_string( str, align, cFill )
+    METHOD PageBreak()
+    METHOD PrintTableHeader()
 
   HIDDEN:
     DATA fp
@@ -24,15 +28,20 @@ CREATE CLASS TFileText
     DATA F_page_break INIT .f.
     DATA F_num_page INIT .f.
     DATA F_align INIT FILE_LEFT
+    DATA F_enable_table_header INIT .f.
+    DATA F_table_header INIT {}
 
-    METHOD page_break()
     METHOD getHeigh()             INLINE ::F_HH
     METHOD setHeigh( nVal )       INLINE ::F_HH := nVal
     METHOD getWidth()             INLINE ::F_sh
     METHOD setWidth( nVal )       INLINE ::F_sh := nVal
     METHOD getPageBreak()         INLINE ::F_page_break
     METHOD setPageBreak( lVal )   INLINE ::F_page_break := lVal
-        
+    METHOD setTableHeader( aHeader )
+    METHOD getEnableTableHeader() INLINE ::F_enable_table_header
+    METHOD setEnableTableHeader( lVal )   INLINE ::F_enable_table_header := lVal
+    METHOD control_page_break()
+            
 		DESTRUCTOR  __My_dtor
 END CLASS
 
@@ -61,12 +70,28 @@ METHOD New( NameFile, width, page_break, high, num_page )  CLASS TFileText
   ::F_num_page := num_page
   return self
 
+METHOD procedure setTableHeader( aHeader )  CLASS TFileText
+
+  hb_default( @aHeader, {})
+  ::F_table_header := aHeader
+  return
+
+METHOD procedure PrintTableHeader()  CLASS TFileText
+  local i, aLen := len(::F_table_header)
+
+  if aLen > 0
+    for i := 1 to aLen
+      ::add_string( ::F_table_header[i] )
+    next
+  endif
+  return
+
 METHOD procedure add_string( str, align, cFill )  CLASS TFileText
 
 	hb_default( @align, FILE_LEFT )
 	hb_default( @cFill, ' ' )
 	hb_default( @str, '' )
-  ::page_break()
+  ::control_page_break()
   if align == FILE_LEFT
     str := padr(str, ::F_sh, cFill)
   elseif align == FILE_RIGHT
@@ -77,7 +102,7 @@ METHOD procedure add_string( str, align, cFill )  CLASS TFileText
   fwrite(::fp, str + hb_eol())
   return
 
-METHOD function page_break()  CLASS TFileText
+METHOD function control_page_break()  CLASS TFileText
   local strPage, strWrite
 
   ::F_current_lina ++
@@ -94,10 +119,28 @@ METHOD function page_break()  CLASS TFileText
       else
         ::F_current_lina := 1
       endif
+      if ::F_enable_table_header
+        ::printTableHeader()
+      endif
     endif
   endif
   return .f.
-    
+
+METHOD procedure PageBreak()  CLASS TFileText
+  local strPage, strWrite
+  
+  fwrite(::fp, chr(12))
+  ::F_count_page ++
+  if ::F_num_page
+    strPage := '‹¨αβ ' + alltrim(Str(::F_count_page))
+    strWrite := padl(strPage, ::F_sh) + hb_eol()
+    fwrite(::fp, strWrite )
+    ::F_current_lina := 2
+  else
+    ::F_current_lina := 1
+  endif
+  return
+  
 METHOD procedure __My_dtor CLASS TFileText
     
   if ::fp != nil
