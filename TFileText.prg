@@ -7,6 +7,7 @@
 // класс описания текстового файла для вывода
 CREATE CLASS TFileText
   VISIBLE:
+    PROPERTY NameFile READ getNameFile
     PROPERTY Heigh READ getHeigh WRITE setHeigh
     PROPERTY Width READ getWidth WRITE setWidth
     PROPERTY EnablePageBreak READ getPageBreak WRITE setPageBreak
@@ -14,6 +15,7 @@ CREATE CLASS TFileText
     PROPERTY EnableTableHeader READ getEnableTableHeader WRITE setEnableTableHeader
 
     METHOD New( NameFile, width, page_break, high, num_page ) CONSTRUCTOR
+    METHOD Close()
     METHOD add_string( str, align, cFill )
     METHOD PageBreak()
     METHOD PrintTableHeader()
@@ -31,6 +33,7 @@ CREATE CLASS TFileText
     DATA F_enable_table_header INIT .f.
     DATA F_table_header INIT {}
 
+    METHOD getNameFile()          INLINE ::FName
     METHOD getHeigh()             INLINE ::F_HH
     METHOD setHeigh( nVal )       INLINE ::F_HH := nVal
     METHOD getWidth()             INLINE ::F_sh
@@ -141,6 +144,13 @@ METHOD procedure PageBreak()  CLASS TFileText
   endif
   return
   
+METHOD procedure Close CLASS TFileText
+    
+  if ::fp != nil
+    FClose(::fp)
+  endif
+  return
+
 METHOD procedure __My_dtor CLASS TFileText
     
   if ::fp != nil

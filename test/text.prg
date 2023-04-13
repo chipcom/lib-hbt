@@ -24,7 +24,16 @@ procedure main( ... )
   SET EXCLUSIVE ON
   SET DELETED ON
 
-
+  public cDataCScr, help_code
+  public cColorStMsg, cColorSt1Msg, cColorSt2Msg, cColorWait
+  
+  cDataCScr   := "W+/B,B/BG"              // 1
+  help_code := 0
+  cColorStMsg := "W+/R,,,,B/W"                  //    Stat_msg
+  cColorSt1Msg:= "W+/R,,,,B/W"                //    Stat_msg
+  cColorSt2Msg:= "GR+/R,,,,B/W"                //    Stat_msg
+  cColorWait  := "W+/R*,,,,B/W"                 //    Ждите
+  
   ft := TFileText():New('test.txt', , .t., , .t.)
   ft:TableHeader := arr_title
   ft:EnableTableHeader := .t.
@@ -48,5 +57,9 @@ procedure main( ... )
       ft:PageBreak()
     endif
   next
+
+  ft:Close()
+
+  viewtext(ft:NameFile, , , , .t., , , 5)
 
   return
