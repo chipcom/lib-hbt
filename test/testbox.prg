@@ -33,8 +33,8 @@ procedure main( ... )
   tb:Caption := 'Выберите регион'
   tb:Frame := BORDER_SINGLE
   tb:View()
-  @ 8, 5 TBOX tb say 'Пол:'
-  @ Row(), Col() + 1 GET mGender
+  @ 8, 5 TBOX tb say 'Пол:' GET mGender
+  // @ Row(), Col() + 1 GET mGender
 
   read
   return
