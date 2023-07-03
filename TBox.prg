@@ -1,6 +1,7 @@
 #include 'hbclass.ch'
 #include 'common.ch'
 #include 'property.ch'
+#include 'function.ch'
 #include 'tbox.ch'
 
 // класс описания оконной области
@@ -17,6 +18,7 @@ CREATE CLASS TBox
 		PROPERTY Caption READ getCaption WRITE setCaption
 		PROPERTY CaptionColor READ getCaptionColor WRITE setCaptionColor
 		PROPERTY Save READ getSave WRITE setSave
+		PROPERTY ChangeAttr READ getChangeAttr WRITE setChangeAttr
 		PROPERTY MessageLine AS ARRAY WRITE setMessageLine
 		PROPERTY HasMessageLine AS LOGICAL READ getHasMessageLine
 		PROPERTY Visible AS LOGICAL READ getVisible
@@ -47,6 +49,7 @@ CREATE CLASS TBox
 		DATA _setColor
 		DATA aRgnStack		INIT {}
 		DATA _nStackPtr		INIT 0
+		DATA FChange_Attr	INIT .f.
 		
 		METHOD getTop
 		METHOD setTop( nValue )
@@ -69,6 +72,8 @@ CREATE CLASS TBox
 		METHOD setMessageLine( param )
 		METHOD getSave
 		METHOD setSave( lValue )
+		METHOD getChangeAttr
+		METHOD setChangeAttr( lValue )
 		METHOD getHasMessageLine
 		METHOD getVisible
 		METHOD getHeight
@@ -79,6 +84,7 @@ CREATE CLASS TBox
 		METHOD SavRgn( nTop, nLeft, nBottom, nRight )
 		METHOD RstRgn( cScreen, nTop, nLeft )
 		METHOD RgnStack( cAction, nTop, nLeft, nBottom, nRight )
+		METHOD Change_attr()
 		
 		DESTRUCTOR  __My_dtor
 		
@@ -185,6 +191,16 @@ METHOD PROCEDURE setSave( lValue ) 		 CLASS TBox
 	
 	if islogical( lValue )
 		::FSave := lValue
+	endif
+	return
+
+METHOD FUNCTION getChangeAttr() 		 CLASS TBox
+	return ::FChange_Attr
+
+METHOD PROCEDURE setChangeAttr( lValue ) 		 CLASS TBox
+	
+	if islogical( lValue )
+		::FChange_Attr := lValue
 	endif
 	return
 
@@ -358,4 +374,16 @@ METHOD function RgnStack( cAction, nTop, nLeft, nBottom, nRight ) CLASS TBox
 		enddo
 		asize( ::aRgnStack, ::_nStackPtr )
 	endif
+	return nil
+
+// сделать область экрана "бледной"
+METHOD function Change_attr() CLASS TBox
+	LOCAL sTmpScr,  ch := CHR(255) + CHR(247)
+	local r1 := 0, c1 := 0, r2 := maxrow(), c2 := maxcol()
+
+	sTmpScr := SAVESCREEN(r1, c1, r2, c2)
+	CHARAND(@sTmpScr, ch)
+	RESTSCREEN(r1, c1, r2, c2, sTmpScr)
+	colorwin(r1, c1, r2, c2, 'N+/BG', 'N/BG')
+	colorwin(r1, c1, r2, c2, 'N+/W', 'N/W')
 	return nil
