@@ -248,20 +248,18 @@ METHOD PROCEDURE View()  CLASS TBox
 	local tmp
 	local i, length
 
-	if ::FSave
-		if ! empty( ::FMessageLine )
-			&& if isarray( ::FMessageLine )
-				&& length := len( ::FMessageLine )
-				&& for i = length to 0 step -1
-					&& ::RgnStack( 'push', maxrow() - length - i,  0, maxrow(), maxcol() )
-				&& next
-			&& elseif ischaracter( ::MessageLine )
-			for i := ::FlenMessage to 1 step -1
-				::RgnStack( 'push', maxrow() - i + 1,  0, maxrow() - i + 1, maxcol() )
-			next
-			&& endif
+	if ::FChange_Attr
+		::RgnStack( 'push', 0,  0, maxrow(), maxcol() )
+		::Change_attr()
+	else
+		if ::FSave
+			if ! empty( ::FMessageLine )
+				for i := ::FlenMessage to 1 step -1
+					::RgnStack( 'push', maxrow() - i + 1,  0, maxrow() - i + 1, maxcol() )
+				next
+			endif
+			::RgnStack( 'push', ::FTop, ::FLeft, ::FBottom + 1, ::FRight + 2 )
 		endif
-		::RgnStack( 'push', ::FTop, ::FLeft, ::FBottom + 1, ::FRight + 2 )
 	endif
 	
 	if ::FShadow	// отрисовка тени внизу и справа от прямоугольника
@@ -274,18 +272,13 @@ METHOD PROCEDURE View()  CLASS TBox
 	@ ::FTop, ::FLeft clear to ::FBottom, ::FRight
 	
 	do case
-		// case ::FFrame == 0 	// без рамки
 		case ::FFrame == BORDER_NONE 	// без рамки
-		// case ::FFrame == 1  // одинарная рамка по краю
 		case ::FFrame == BORDER_SINGLE  // одинарная рамка по краю
 			@ ::FTop, ::FLeft TO ::FBottom, ::FRight
-		// case ::FFrame == 2  // двойная рамка по краю
 		case ::FFrame == BORDER_DOUBLE  // двойная рамка по краю
 			@ ::FTop, ::FLeft TO ::FBottom, ::FRight double
-		// case ::FFrame == 3  // одинарная рамка со сдвигом
 		case ::FFrame == BORDER_SINGLE_SHIFT  // одинарная рамка со сдвигом
 			@ ::FTop, ::FLeft + 1 TO ::FBottom, ::FRight - 1
-		// case ::FFrame == 4  // двойная рамка со сдвигом
 		case ::FFrame == BORDER_DOUBLE_SHIFT  // двойная рамка со сдвигом
 			@ ::FTop, ::FLeft + 1 TO ::FBottom, ::FRight - 1 double
 	endcase
@@ -295,10 +288,8 @@ METHOD PROCEDURE View()  CLASS TBox
 	endif
 	if ! empty( ::FMessageLine )
 		for i := ::FlenMessage to 1 step -1
-		&& for i := 1 to ::FlenMessage
 			::statusBar( maxrow() - i + 1, ::FMessageLine[ ::FlenMessage - i + 1 ] )
 		next
-		&& endif
 	endif
 	::_isView := .t.
 	return
@@ -307,7 +298,7 @@ METHOD procedure __My_dtor CLASS TBox
 
 	setcolor( ::_setColor )
 	
-	if ::FSave .and. ::_isView
+	if (::FSave .and. ::_isView) .or. (::FChange_Attr .and. ::_isView)
 		::RgnStack( 'pop all' )
 	endif
 	return
@@ -330,10 +321,8 @@ METHOD function statusBar( pos, cStr, cColor1, cColor2 ) CLASS TBox
 	next
 	out_str := padc( alltrim( out_str ), maxcol() + 1 )
 	@ pos, 0 say out_str color cColor1
-	&& @ maxrow(),0 say out_str color cColor1
 	for i := 1 to len( out_arr )
 		if ( j := at( out_arr[ i ], out_str ) ) > 0
-			&& @ maxrow(), j - 1 say out_arr[ i ] color cColor2
 			@ pos, j - 1 say out_arr[ i ] color cColor2
 		endif
 	next
