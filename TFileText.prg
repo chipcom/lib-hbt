@@ -75,7 +75,6 @@ METHOD New( NameFile, width, page_break, high, num_page )  CLASS TFileText
   return self
 
 METHOD function Size()  CLASS TFileText
-  altd()
 	if !isnil(::fp)
 		return HB_VFSIZE(::fp)
 	endif
