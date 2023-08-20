@@ -4,6 +4,7 @@
 procedure main( ... )
   local ft
   local i
+  local nSize, nFile
 
   local arr_title := {;
     "컴컴컴컴컴컴컴컴컴컫컴컴컴컴컫컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�", ;
@@ -33,7 +34,7 @@ procedure main( ... )
   cColorSt1Msg:= "W+/R,,,,B/W"                //    Stat_msg
   cColorSt2Msg:= "GR+/R,,,,B/W"                //    Stat_msg
   cColorWait  := "W+/R*,,,,B/W"                 //    넠ⓥ�
-  
+
   ft := TFileText():New('test.txt', , .t., , .t.)
   ft:TableHeader := arr_title
   ft:EnableTableHeader := .t.
@@ -58,8 +59,12 @@ procedure main( ... )
     endif
   next
 
-  ft:Close()
+  nsize := ft:Size()
+  nFile := ft:NameFile
+  // ft:Close()
 
-  viewtext(ft:NameFile, , , , .t., , , 5)
+  ft := nil
+
+  viewtext(nFile, , , , .t., , , 5)
 
   return

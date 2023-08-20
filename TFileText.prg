@@ -19,6 +19,7 @@ CREATE CLASS TFileText
     METHOD add_string( str, align, cFill )
     METHOD PageBreak()
     METHOD PrintTableHeader()
+    METHOD Size()
 
   HIDDEN:
     DATA fp
@@ -61,7 +62,7 @@ METHOD New( NameFile, width, page_break, high, num_page )  CLASS TFileText
 
   ::FName := NameFile
 
-  if (::fp := fcreate( ::FName )) == F_ERROR
+  if (::fp := HB_VFOPEN( ::FName )) == nil
     return nil
   endif
 
@@ -72,6 +73,14 @@ METHOD New( NameFile, width, page_break, high, num_page )  CLASS TFileText
   ::F_page_break := page_break
   ::F_num_page := num_page
   return self
+
+METHOD function Size()  CLASS TFileText
+  altd()
+	if !isnil(::fp)
+		return HB_VFSIZE(::fp)
+	endif
+	return 0
+		
 
 METHOD procedure setTableHeader( aHeader )  CLASS TFileText
 
@@ -102,7 +111,7 @@ METHOD procedure add_string( str, align, cFill )  CLASS TFileText
   elseif align == FILE_CENTER
     str := padc(str, ::F_sh, cFill)
   endif
-  fwrite(::fp, str + hb_eol())
+  HB_VFWRITE(::fp, str + hb_eol())
   return
 
 METHOD function control_page_break()  CLASS TFileText
@@ -111,13 +120,13 @@ METHOD function control_page_break()  CLASS TFileText
   ::F_current_lina ++
   if ::F_page_break
     if ::F_current_lina > ::F_HH
-      fwrite(::fp, chr(12))
+      HB_VFWRITE(::fp, chr(12))
       ::F_count_page ++
       if ::F_num_page
         strPage := '‹¨αβ ' + alltrim(Str(::F_count_page))
         // strWrite := PadLeft( strPage, ::F_sh - len(strPage) ) + hb_eol()
         strWrite := padl(strPage, ::F_sh) + hb_eol()
-        fwrite(::fp, strWrite )//, [<cChar|nChar>] ) ? cString
+        HB_VFWRITE(::fp, strWrite )//, [<cChar|nChar>] ) ? cString
         ::F_current_lina := 2
       else
         ::F_current_lina := 1
@@ -132,12 +141,12 @@ METHOD function control_page_break()  CLASS TFileText
 METHOD procedure PageBreak()  CLASS TFileText
   local strPage, strWrite
   
-  fwrite(::fp, chr(12))
+  HB_VFWRITE(::fp, chr(12))
   ::F_count_page ++
   if ::F_num_page
     strPage := '‹¨αβ ' + alltrim(Str(::F_count_page))
     strWrite := padl(strPage, ::F_sh) + hb_eol()
-    fwrite(::fp, strWrite )
+    HB_VFWRITE(::fp, strWrite )
     ::F_current_lina := 2
   else
     ::F_current_lina := 1
@@ -147,14 +156,14 @@ METHOD procedure PageBreak()  CLASS TFileText
 METHOD procedure Close CLASS TFileText
     
   if ::fp != nil
-    FClose(::fp)
+    HB_VFCLOSE(::fp)
   endif
   return
 
 METHOD procedure __My_dtor CLASS TFileText
     
   if ::fp != nil
-    FClose(::fp)
+    HB_VFCLOSE(::fp)
   endif
   return
   
