@@ -62,7 +62,7 @@ METHOD New( NameFile, width, page_break, high, num_page )  CLASS TFileText
 
   ::FName := NameFile
 
-  if (::fp := HB_VFOPEN( ::FName )) == nil
+  if (::fp := HB_VFOPEN( ::FName, FO_CREAT + FO_TRUNC + FO_WRITE + FO_EXCLUSIVE )) == nil
     return nil
   endif
 
