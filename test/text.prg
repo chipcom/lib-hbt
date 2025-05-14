@@ -5,6 +5,7 @@ procedure main( ... )
   local ft
   local i
   local nSize, nFile
+  local aRow
 
   local arr_title := {;
     "───────────────────┬─────────┬───────────────────────────────────────────────────────", ;
@@ -36,18 +37,29 @@ procedure main( ... )
   cColorWait  := "W+/R*,,,,B/W"                 //    Ждите
 
   ft := TFileText():New('test.txt', , .t., , .t.)
-  ft:TableHeader := arr_title
+  ft:AddColumn( 'Шифр ФФОМС', 15, FILE_LEFT )
+  ft:AddColumn( 'Шифр МО', 12, FILE_RIGHT )
+  ft:AddColumn( 'Наименование услуги', 30, FILE_CENTER )
+  ft:AddColumn( 'Шифр ТФОМС', 15, FILE_LEFT )
+//  ft:TableHeader := arr_title
   ft:EnableTableHeader := .t.
   ft:printTableHeader()
   for i := 1 to 200
-    if i == 100
-      ft:add_string('test ' + alltrim(str(i,3)), FILE_CENTER, '=')
-    elseif i == 110
-      ft:add_string('test ' + alltrim(str(i,3)), FILE_RIGHT, '+')
-      ft:EnableTableHeader := .f.
-    else
-      ft:add_string('test ' + alltrim(str(i,3)))
-    endif
+    aRow := {}  // очистим массив
+    AAdd( aRow, 'test' )
+    AAdd( aRow, alltrim( str( i, 3 ) ) )
+    AAdd( aRow, 'мой дядя самых честных правил, когда не в шутку занемог' )
+    AAdd( aRow, 'ку-кук-укук-кукуку' )
+    ft:AddRow( aRow )
+//    if i == 100
+//      ft:AddRow( aRow )
+//      ft:add_string('test ' + alltrim(str(i,3)), FILE_CENTER, '=')
+//    elseif i == 110
+//      ft:add_string('test ' + alltrim(str(i,3)), FILE_RIGHT, '+')
+//      ft:EnableTableHeader := .f.
+//    else
+//      ft:add_string('test ' + alltrim(str(i,3)))
+//    endif
     if i == 61
       ft:Heigh := 10
     endif

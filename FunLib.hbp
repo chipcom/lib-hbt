@@ -3,10 +3,10 @@
 # Include section
 -i..\include
 
--workdir=C:\TEMP
--oFunLib.lib
+#-workdir=D:\_MO\TEMP\funlib
+-oFunLib
 
-settingsSystem.prg
+#SettingsSystem.prg
 TSettingSystem.prg
 popupN.prg
 
