@@ -37,10 +37,10 @@ procedure main( ... )
   cColorWait  := "W+/R*,,,,B/W"                 //    Ждите
 
   ft := TFileText():New('test.txt', , .t., , .t.)
-  ft:AddColumn( 'Шифр ФФОМС', 15, FILE_LEFT )
-  ft:AddColumn( 'Шифр МО', 12, FILE_RIGHT )
-  ft:AddColumn( 'Наименование услуги', 30, FILE_CENTER )
-  ft:AddColumn( 'Шифр ТФОМС', 15, FILE_LEFT )
+  ft:Add_Column( 'Шифр ФФОМС', 15, FILE_LEFT )
+  ft:Add_Column( 'Шифр МО', 12, FILE_CENTER )
+  ft:Add_Column( 'Наименование услуги', 30, FILE_LEFT, , .t. )
+  ft:Add_Column( 'Шифр ТФОМС', 15, FILE_RIGHT, , .t. )
 //  ft:TableHeader := arr_title
   ft:EnableTableHeader := .t.
   ft:printTableHeader()
@@ -50,7 +50,7 @@ procedure main( ... )
     AAdd( aRow, alltrim( str( i, 3 ) ) )
     AAdd( aRow, 'мой дядя самых честных правил, когда не в шутку занемог' )
     AAdd( aRow, 'ку-кук-укук-кукуку' )
-    ft:AddRow( aRow )
+    ft:Add_Row( aRow )
 //    if i == 100
 //      ft:AddRow( aRow )
 //      ft:add_string('test ' + alltrim(str(i,3)), FILE_CENTER, '=')

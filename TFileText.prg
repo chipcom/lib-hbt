@@ -19,8 +19,8 @@ CREATE CLASS TFileText
     METHOD New( NameFile, width, page_break, high, num_page ) CONSTRUCTOR
     METHOD Close()
     METHOD add_string( str, align, cFill )
-    METHOD AddColumn( title, width, align, cFill, wrap )
-    METHOD AddRow( aRow )
+    METHOD Add_Column( title, width, align, cFill, wrap )
+    METHOD Add_Row( aRow )
     METHOD PageBreak()
     METHOD PrintTableHeader()
     METHOD Size()
@@ -39,7 +39,6 @@ CREATE CLASS TFileText
     DATA F_table_header INIT {}
     DATA F_table_column INIT {}
     DATA F_column_wrap INIT .f.
-//    DATA F_column_count_wrap INIT 0
     DATA F_first INIT .t.
     DATA F_symbol INIT { '─', '│', '┬', '┴' }
 
@@ -54,7 +53,6 @@ CREATE CLASS TFileText
     METHOD getEnableTableHeader() INLINE ::F_enable_table_header
     METHOD setEnableTableHeader( lVal )   INLINE ::F_enable_table_header := lVal
     METHOD control_page_break()
-//    METHOD word_wrap( aStr, s, n, symb )
     METHOD word_wrap( str, n, symb )
             
 		DESTRUCTOR  __My_dtor
@@ -85,40 +83,40 @@ METHOD New( NameFile, width, page_break, high, num_page )  CLASS TFileText
   ::F_num_page := num_page
   return self
 
-METHOD procedure AddRow( aRow ) CLASS TFileText
+METHOD procedure Add_Row( aRow ) CLASS TFileText
 
   local i, str
   local j, aTemp, max_capacity := 0, arr := {}
 
   hb_default( @aRow, {} )
-  str := ''
   aTemp := {}
   for i := 1 to len( aRow )
-    AAdd( aTemp, { i, ::word_wrap( aRow[ i ], ::F_table_column[ i, 1 ] ) } )
-      max_capacity := iif( len( aTemp ) > max_capacity, len( aTemp ), max_capacity )
+    AAdd( aTemp, { ::word_wrap( aRow[ i ], ::F_table_column[ i, 1 ] ) } )
+      max_capacity := iif( len( aTemp[ i, 1 ] ) > max_capacity, len( aTemp[ i, 1 ] ), max_capacity )
   next
-  for i := 1 to len( aRow )
-/*    if ::F_table_column[ i, 5 ]
-      aTemp := {}
-      ::word_wrap( aTemp, aRow[ i ], ::F_table_column[ i, 1 ] ) //, symb )
-      AAdd( arr, { i, aTemp } )
-      max_capacity := iif( len( aTemp ) > max_capacity, len( aTemp ), max_capacity )
-    else
-*/
-      if ::F_table_column[ i, 2 ] == FILE_LEFT
-        str += PadRight( aRow[ i ], ::F_table_column[ i, 1 ], ::F_table_column[ i, 4 ] )
-      elseif ::F_table_column[ i, 2 ] == FILE_RIGHT
-        str += PadLeft( aRow[ i ], ::F_table_column[ i, 1 ], ::F_table_column[ i, 4 ] )
-      elseif ::F_table_column[ i, 2 ] == FILE_CENTER
-        str += Center( aRow[ i ], ::F_table_column[ i, 1 ], ::F_table_column[ i, 4 ], .t. )
+  for j := 1 to max_capacity
+    str := ''
+    for i := 1 to len( aRow )
+      if ( len( aTemp[ i, 1 ] ) >= j  .and. ( ::F_table_column[ i, 5 ] ) ) .or. ;
+          ( ( ! ::F_table_column[ i, 5 ] ) .and. ( j == 1 ) )
+        if ::F_table_column[ i, 2 ] == FILE_LEFT
+          str += PadRight( alltrim( aTemp[ i, 1, j ] ), ::F_table_column[ i, 1 ], ::F_table_column[ i, 4 ] )
+        elseif ::F_table_column[ i, 2 ] == FILE_RIGHT
+          str += PadLeft( alltrim( aTemp[ i, 1, j ] ), ::F_table_column[ i, 1 ], ::F_table_column[ i, 4 ] )
+        elseif ::F_table_column[ i, 2 ] == FILE_CENTER
+          str += Center( alltrim( aTemp[ i, 1, j ] ), ::F_table_column[ i, 1 ], ::F_table_column[ i, 4 ], .t. )
+        endif
+      else
+        str += space( ::F_table_column[ i, 1 ] )
       endif
+      
       str += chr( 32 )  // ::F_symbol[ 2 ]
-//    endif
-  next i
-  ::add_string( str )
+    next i
+    ::add_string( str )
+  next
   return
 
-METHOD procedure AddColumn( title, width, align, cFill, wrap ) CLASS TFileText
+METHOD procedure Add_Column( title, width, align, cFill, wrap ) CLASS TFileText
 
   hb_default( @title, '' )
   hb_default( @width, 0 )
@@ -246,9 +244,7 @@ METHOD procedure __My_dtor CLASS TFileText
   endif
   return
   
-//METHOD function word_wrap( aStr, str, n, symb ) CLASS TFileText
 METHOD function word_wrap( str, n, symb ) CLASS TFileText
-//  // aStr  - имя массива, в который будут заноситься обрезки строки
   // str    - строка, которая будет разрезаться
   // n    - количество символов в обрезках строк
   // symb - подмножество симоволов из " ,;-+/" (разделители для переноса)
@@ -258,18 +254,11 @@ METHOD function word_wrap( str, n, symb ) CLASS TFileText
   
   DEFAULT symb TO ' ,;-'
   aStr := {}
-/*  if valtype( aStr ) == 'A'
-    AFILL( aStr, '' )
-  else
-    aStr := {}
-  endif
-*/
   if empty( str := RTRIM( str ) )
     if len( aStr ) == 0
       asize( aStr, 1 )
     endif
     aStr[ 1 ] := space( n )
-//    return 0
     return aStr
   endif
   DO WHILE .T.
@@ -308,5 +297,4 @@ METHOD function word_wrap( str, n, symb ) CLASS TFileText
       ENDIF
     ENDIF
   ENDDO
-//  RETURN i       //  вернуть количество получившихся строк
   RETURN aStr       //  вернуть массив получившихся строк
