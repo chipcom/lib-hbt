@@ -39,7 +39,7 @@ CREATE CLASS TFileText
     DATA F_table_header INIT {}
     DATA F_table_column INIT {}
     DATA F_column_wrap INIT .f.
-    DATA F_column_count_wrap INIT 0
+//    DATA F_column_count_wrap INIT 0
     DATA F_first INIT .t.
     DATA F_symbol INIT { '─', '│', '┬', '┴' }
 
@@ -54,7 +54,8 @@ CREATE CLASS TFileText
     METHOD getEnableTableHeader() INLINE ::F_enable_table_header
     METHOD setEnableTableHeader( lVal )   INLINE ::F_enable_table_header := lVal
     METHOD control_page_break()
-    METHOD word_wrap( aStr, s, n, symb )
+//    METHOD word_wrap( aStr, s, n, symb )
+    METHOD word_wrap( str, n, symb )
             
 		DESTRUCTOR  __My_dtor
 END CLASS
@@ -87,10 +88,15 @@ METHOD New( NameFile, width, page_break, high, num_page )  CLASS TFileText
 METHOD procedure AddRow( aRow ) CLASS TFileText
 
   local i, str
-//  local j, aTemp, max_capacity := 0, arr := {}
+  local j, aTemp, max_capacity := 0, arr := {}
 
   hb_default( @aRow, {} )
   str := ''
+  aTemp := {}
+  for i := 1 to len( aRow )
+    AAdd( aTemp, { i, ::word_wrap( aRow[ i ], ::F_table_column[ i, 1 ] ) } )
+      max_capacity := iif( len( aTemp ) > max_capacity, len( aTemp ), max_capacity )
+  next
   for i := 1 to len( aRow )
 /*    if ::F_table_column[ i, 5 ]
       aTemp := {}
@@ -127,7 +133,7 @@ METHOD procedure AddColumn( title, width, align, cFill, wrap ) CLASS TFileText
   endif
   if wrap
     ::F_column_wrap := .t.
-    ::F_column_count_wrap++
+//    ::F_column_count_wrap++
   endif
   if ! ::F_first
     ::F_table_header[ 1 ] += ::F_symbol[ 3 ]
@@ -240,42 +246,47 @@ METHOD procedure __My_dtor CLASS TFileText
   endif
   return
   
-METHOD function word_wrap( aStr, s, n, symb ) CLASS TFileText
-  // aStr  - имя массива, в который будут заноситься обрезки строки
-  // s    - строка, которая будет разрезаться
+//METHOD function word_wrap( aStr, str, n, symb ) CLASS TFileText
+METHOD function word_wrap( str, n, symb ) CLASS TFileText
+//  // aStr  - имя массива, в который будут заноситься обрезки строки
+  // str    - строка, которая будет разрезаться
   // n    - количество символов в обрезках строк
   // symb - подмножество симоволов из " ,;-+/" (разделители для переноса)
   
   Local i := 0, i1, i2, i3, i4, i5, i6, j, fl, s1
+  local aStr
   
   DEFAULT symb TO ' ,;-'
-  if valtype( aStr ) == 'A'
+  aStr := {}
+/*  if valtype( aStr ) == 'A'
     AFILL( aStr, '' )
   else
     aStr := {}
   endif
-  if empty( s := RTRIM( s ) )
+*/
+  if empty( str := RTRIM( str ) )
     if len( aStr ) == 0
       asize( aStr, 1 )
     endif
     aStr[ 1 ] := space( n )
-    return 0
+//    return 0
+    return aStr
   endif
   DO WHILE .T.
-    IF LEN( s ) <= n
+    IF LEN( str ) <= n
       if ++i > len( aStr )
         asize( aStr, i )
       endif
-      aStr[ i ] := padr( s, n )
+      aStr[ i ] := padr( str, n )
       EXIT
-    ELSEIF SUBSTR( s, n + 1, 1 ) == ' ' // если после отрезания сразу идет пробел
+    ELSEIF SUBSTR( str, n + 1, 1 ) == ' ' // если после отрезания сразу идет пробел
       if ++i > len( aStr )
         asize( aStr, i )
       endif
-      aStr[ i ] := SUBSTR( s, 1, n )
-      s := LTRIM( SUBSTR( s, n + 1 ) )
+      aStr[ i ] := SUBSTR( str, 1, n )
+      str := LTRIM( SUBSTR( str, n + 1 ) )
     ELSE
-      s1 := SUBSTR( s, 1, n )
+      s1 := SUBSTR( str, 1, n )
       i1 := if( ' ' $ symb, RAT( ' ', s1 ), 0 )
       i2 := if( ',' $ symb, RAT( ',', s1 ), 0 )
       i3 := if( ';' $ symb, RAT( ';', s1 ), 0 )
@@ -290,11 +301,12 @@ METHOD function word_wrap( aStr, s, n, symb ) CLASS TFileText
       endif
       IF j > 0
         aStr[ i ] := padr( SUBSTR( s1, 1, IF( fl, j - 1, j ) ), n )
-        s := LTRIM( SUBSTR( s, j + 1 ) )
+        str := LTRIM( SUBSTR( str, j + 1 ) )
       ELSE
-        aStr[ i ] := SUBSTR( s, 1, n )
-        s := LTRIM( SUBSTR( s, n + 1 ) )
+        aStr[ i ] := SUBSTR( str, 1, n )
+        str := LTRIM( SUBSTR( str, n + 1 ) )
       ENDIF
     ENDIF
   ENDDO
-  RETURN i       //  вернуть количество получившихся строк
+//  RETURN i       //  вернуть количество получившихся строк
+  RETURN aStr       //  вернуть массив получившихся строк
