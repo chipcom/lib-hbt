@@ -16,12 +16,14 @@ CREATE CLASS TFileText
     PROPERTY TableHeader WRITE setTableHeader
     PROPERTY EnableTableHeader READ getEnableTableHeader WRITE setEnableTableHeader
     PROPERTY VerticalSeparator READ getVerticalSeparator WRITE setVerticalSeparator
+    PROPERTY TableFooterEnable WRITE setTableFooterEnable
 
     METHOD New( NameFile, width, page_break, high, num_page ) CONSTRUCTOR
     METHOD Close()
     METHOD add_string( str, align, cFill )
     METHOD Add_Column( title, width, align, cFill, wrap )
     METHOD Add_Row( aRow )
+    METHOD End_Table()
     METHOD PageBreak()
     METHOD PrintTableHeader()
     METHOD Size()
@@ -32,15 +34,17 @@ CREATE CLASS TFileText
     DATA F_sh INIT 80
     DATA F_HH INIT 60
     DATA F_count_page INIT 1
-    DATA F_current_lina INIT 0
+    DATA F_current_line INIT 0
     DATA F_page_break INIT .f.
     DATA F_num_page INIT .f.
     DATA F_align INIT FILE_LEFT
     DATA F_enable_table_header INIT .f.
     DATA F_table_header INIT {}
+    DATA F_table_footer INIT ''
+    DATA F_table_enable_footer INIT .f.
     DATA F_table_column INIT {}
     DATA F_column_wrap INIT .f.
-    DATA F_first INIT .t.
+    DATA F_first_column INIT .t.
     DATA F_symbol INIT { 'Δ', '³', 'Β', 'Α' }
     DATA F_vertical_separator INIT chr( 32 )
 
@@ -56,6 +60,7 @@ CREATE CLASS TFileText
     METHOD setEnableTableHeader( lVal )   INLINE ::F_enable_table_header := lVal
     METHOD getVerticalSeparator() INLINE ::F_vertical_separator
     METHOD setVerticalSeparator( lVal )   INLINE ::F_vertical_separator := lVal
+    METHOD setTableFooterEnable( lVal )   INLINE ::F_table_enable_footer := lVal
       
     METHOD control_page_break()
     METHOD word_wrap( str, n, symb )
@@ -82,7 +87,7 @@ METHOD New( NameFile, width, page_break, high, num_page )  CLASS TFileText
 
   ::F_HH := high
   ::F_sh := width
-  ::F_current_lina := 0
+  ::F_current_line := 0
   ::F_count_page := 1
   ::F_page_break := page_break
   ::F_num_page := num_page
@@ -146,15 +151,16 @@ METHOD procedure Add_Column( title, width, align, cFill, wrap, align_header ) CL
   endif
   if wrap
     ::F_column_wrap := .t.
-//    ::F_column_count_wrap++
   endif
-  if ! ::F_first
+  if ! ::F_first_column
     ::F_table_header[ 1 ] += ::F_symbol[ 3 ]
     ::F_table_header[ 2 ] += ::F_symbol[ 2 ]
     ::F_table_header[ 3 ] += ::F_symbol[ 4 ]
+    ::F_table_footer += ::F_symbol[ 4 ]
   endif
   ::F_table_header[ 1 ] += Replicate( ::F_symbol[ 1 ], width )
   ::F_table_header[ 3 ] += Replicate( ::F_symbol[ 1 ], width )
+  ::F_table_footer += Replicate( ::F_symbol[ 1 ], width )
   if align_header == FILE_LEFT
     ::F_table_header[ 2 ] += PadRight( title, width, cFill )
   elseif align_header == FILE_RIGHT
@@ -162,7 +168,7 @@ METHOD procedure Add_Column( title, width, align, cFill, wrap, align_header ) CL
   elseif align_header == FILE_CENTER
     ::F_table_header[ 2 ] += Center( title, width, cFill, .t. )
   endif
-  ::F_first := .f.
+  ::F_first_column := .f.
   return
 
 METHOD function Size()  CLASS TFileText
@@ -204,24 +210,27 @@ METHOD procedure add_string( str, align, cFill )  CLASS TFileText
   HB_VFWRITE( ::fp, str + hb_eol() )
   return
 
+METHOD procedure End_Table()  CLASS TFileText
+
+  if ::F_table_enable_footer
+  ::add_string( ::F_table_footer + hb_eol() )
+  ::F_table_enable_footer := .f.
+  endif
+  return
+
 METHOD function control_page_break()  CLASS TFileText
   
   local strPage, strWrite
 
-  ::F_current_lina ++
+  ::F_current_line ++
   if ::F_page_break
-    if ::F_current_lina > ::F_HH
-      HB_VFWRITE( ::fp, chr( 12 ) )
-      ::F_count_page ++
-      if ::F_num_page
-        strPage := '‹¨αβ ' + alltrim( Str( ::F_count_page ) )
-        // strWrite := PadLeft( strPage, ::F_sh - len(strPage) ) + hb_eol()
-        strWrite := padl( strPage, ::F_sh ) + hb_eol()
-        HB_VFWRITE( ::fp, strWrite )//, [<cChar|nChar>] ) ? cString
-        ::F_current_lina := 2
-      else
-        ::F_current_lina := 1
-      endif
+    if ::F_current_line == ::F_HH .and. ::F_table_enable_footer
+      strWrite := ::F_table_footer + hb_eol()
+      HB_VFWRITE( ::fp, strWrite )
+      ::F_current_line ++
+    endif
+    if ::F_current_line > ::F_HH
+      ::PageBreak()
       if ::F_enable_table_header
         ::printTableHeader()
       endif
@@ -233,15 +242,15 @@ METHOD procedure PageBreak()  CLASS TFileText
   
   local strPage, strWrite
   
-  HB_VFWRITE(::fp, chr(12))
+  HB_VFWRITE( ::fp, chr( 12 ) )
   ::F_count_page ++
   if ::F_num_page
     strPage := '‹¨αβ ' + alltrim( Str( ::F_count_page ) )
     strWrite := padl( strPage, ::F_sh ) + hb_eol()
     HB_VFWRITE( ::fp, strWrite )
-    ::F_current_lina := 2
+    ::F_current_line := 2
   else
-    ::F_current_lina := 1
+    ::F_current_line := 1
   endif
   return
   

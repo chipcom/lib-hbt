@@ -44,6 +44,7 @@ procedure main( ... )
 //  ft:TableHeader := arr_title
   ft:EnableTableHeader := .t.
   ft:VerticalSeparator := '│'
+  ft:TableFooterEnable := .t.
   ft:printTableHeader()
   for i := 1 to 200
     aRow := {}  // очистим массив
@@ -52,16 +53,10 @@ procedure main( ... )
     AAdd( aRow, 'мой дядя самых честных правил, когда не в шутку занемог' )
     AAdd( aRow, 'ку-кук-укук-кукуку' )
     ft:Add_Row( aRow )
-//    if i == 100
-//      ft:AddRow( aRow )
-//      ft:add_string('test ' + alltrim(str(i,3)), FILE_CENTER, '=')
-//    elseif i == 110
-//      ft:add_string('test ' + alltrim(str(i,3)), FILE_RIGHT, '+')
-//      ft:EnableTableHeader := .f.
-//    else
-//      ft:add_string('test ' + alltrim(str(i,3)))
-//    endif
-    if i == 61
+    if i == 100
+      ft:End_Table()
+    endif
+    if i == 120
       ft:Heigh := 10
     endif
     if i == 170
