@@ -15,6 +15,7 @@ CREATE CLASS TFileText
     PROPERTY EnablePageBreak READ getPageBreak WRITE setPageBreak
     PROPERTY TableHeader WRITE setTableHeader
     PROPERTY EnableTableHeader READ getEnableTableHeader WRITE setEnableTableHeader
+    PROPERTY VerticalSeparator READ getVerticalSeparator WRITE setVerticalSeparator
 
     METHOD New( NameFile, width, page_break, high, num_page ) CONSTRUCTOR
     METHOD Close()
@@ -41,6 +42,7 @@ CREATE CLASS TFileText
     DATA F_column_wrap INIT .f.
     DATA F_first INIT .t.
     DATA F_symbol INIT { 'Ä', '³', 'Â', 'Á' }
+    DATA F_vertical_separator INIT chr( 32 )
 
     METHOD getNameFile()          INLINE ::FName
     METHOD getHeigh()             INLINE ::F_HH
@@ -52,6 +54,9 @@ CREATE CLASS TFileText
     METHOD setTableHeader( aHeader )
     METHOD getEnableTableHeader() INLINE ::F_enable_table_header
     METHOD setEnableTableHeader( lVal )   INLINE ::F_enable_table_header := lVal
+    METHOD getVerticalSeparator() INLINE ::F_vertical_separator
+    METHOD setVerticalSeparator( lVal )   INLINE ::F_vertical_separator := lVal
+      
     METHOD control_page_break()
     METHOD word_wrap( str, n, symb )
             
@@ -87,12 +92,21 @@ METHOD procedure Add_Row( aRow ) CLASS TFileText
 
   local i, str
   local j, aTemp, max_capacity := 0, arr := {}
+  local arrTemp
 
   hb_default( @aRow, {} )
   aTemp := {}
   for i := 1 to len( aRow )
-    AAdd( aTemp, { ::word_wrap( aRow[ i ], ::F_table_column[ i, 1 ] ) } )
-      max_capacity := iif( len( aTemp[ i, 1 ] ) > max_capacity, len( aTemp[ i, 1 ] ), max_capacity )
+    arrTemp := { ::word_wrap( aRow[ i ], ::F_table_column[ i, 1 ] ) }
+    if ( ! ::F_table_column[ i, 5 ] ) .and. ( len( arrTemp[ 1 ] ) > 1 )
+      asize( arrTemp[ 1 ], 1 )
+    endif
+    AAdd( aTemp, arrTemp )
+    max_capacity := iif( len( arrTemp[ 1 ] ) > max_capacity, len( arrTemp[ 1 ] ), max_capacity )
+
+//    AAdd( aTemp, { ::word_wrap( aRow[ i ], ::F_table_column[ i, 1 ] ) } )
+//    max_capacity := iif( len( aTemp[ i, 1 ] ) > max_capacity, len( aTemp[ i, 1 ] ), max_capacity )
+
   next
   for j := 1 to max_capacity
     str := ''
@@ -110,7 +124,7 @@ METHOD procedure Add_Row( aRow ) CLASS TFileText
         str += space( ::F_table_column[ i, 1 ] )
       endif
       
-      str += chr( 32 )  // ::F_symbol[ 2 ]
+      str += ::F_vertical_separator   // chr( 32 )  // ::F_symbol[ 2 ]
     next i
     ::add_string( str )
   next

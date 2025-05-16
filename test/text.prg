@@ -43,6 +43,7 @@ procedure main( ... )
   ft:Add_Column( 'Шифр ТФОМС', 15, FILE_RIGHT, , .t. )
 //  ft:TableHeader := arr_title
   ft:EnableTableHeader := .t.
+  ft:VerticalSeparator := '│'
   ft:printTableHeader()
   for i := 1 to 200
     aRow := {}  // очистим массив
