@@ -116,13 +116,14 @@ METHOD procedure Add_Row( aRow ) CLASS TFileText
   next
   return
 
-METHOD procedure Add_Column( title, width, align, cFill, wrap ) CLASS TFileText
+METHOD procedure Add_Column( title, width, align, cFill, wrap, align_header ) CLASS TFileText
 
   hb_default( @title, '' )
   hb_default( @width, 0 )
   hb_default( @align, FILE_LEFT )
 	hb_default( @cFill, chr( 32 ) )
 	hb_default( @wrap, .f. )
+	hb_default( @align_header, align )
   AAdd( ::F_table_column, { width, align, title, cFill, wrap } )
   if len( ::F_table_header ) == 0
     AAdd( ::F_table_header, '' )
@@ -140,11 +141,11 @@ METHOD procedure Add_Column( title, width, align, cFill, wrap ) CLASS TFileText
   endif
   ::F_table_header[ 1 ] += Replicate( ::F_symbol[ 1 ], width )
   ::F_table_header[ 3 ] += Replicate( ::F_symbol[ 1 ], width )
-  if align == FILE_LEFT
+  if align_header == FILE_LEFT
     ::F_table_header[ 2 ] += PadRight( title, width, cFill )
-  elseif align == FILE_RIGHT
+  elseif align_header == FILE_RIGHT
     ::F_table_header[ 2 ] += PadLeft( title, width, cFill )
-  elseif align == FILE_CENTER
+  elseif align_header == FILE_CENTER
     ::F_table_header[ 2 ] += Center( title, width, cFill, .t. )
   endif
   ::F_first := .f.
