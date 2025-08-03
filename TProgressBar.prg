@@ -10,7 +10,7 @@ CREATE CLASS TProgressBar
 		PROPERTY ColumnMax WRITE setColumnMax INIT 0
 		PROPERTY ValueMin WRITE setValueMin INIT 0
 		PROPERTY ValueMax WRITE setValueMax INIT 0
-		PROPERTY Symbol WRITE setSymbol INIT chr( 176 )
+		PROPERTY Symbol WRITE setSymbol // INIT chr( 176 )
 		PROPERTY Color WRITE setColor
 
 		METHOD new( nRow, nColumnMin, nColumnMax, nValueMin, nValueMax )
@@ -30,19 +30,18 @@ CREATE CLASS TProgressBar
     DATA FScreen
     DATA FSymbol      INIT chr( 176 )
     DATA FColor       INIT 'N/BG, W+/N'
-//		DATA FDeleted	INIT .f.
 
-    METHOD setRow( nValue )
-    METHOD setColumnMin( nValue )
-    METHOD setColumnMax( nValue )
-    METHOD setValueMin( nValue )
-    METHOD setValueMax( nValue )
-    METHOD setSymbol( nValue )
-    METHOD setColor( cColor )
+    METHOD setRow( nValue )             INLINE ::FRow := nValue
+    METHOD setColumnMin( nValue )       INLINE ::FColumnMIN := nValue
+    METHOD setColumnMax( nValue )       INLINE ::FColumnMax := nValue
+    METHOD setValueMin( nValue )        INLINE ::FValueMin := nValue
+    METHOD setValueMax( nValue )        INLINE ::FValueMax := nValue
+    METHOD setSymbol( cValue )          INLINE ::Fsymbol := cValue
+    METHOD setColor( cColor )           INLINE ::FColor := cColor
 		
 ENDCLASS
 
-METHOD New( nRow, nColumnMin, nColumnMax, nValueMin, nValueMax )	CLASS TProgressBar
+METHOD TProgressBar:New( nRow, nColumnMin, nColumnMax, nValueMin, nValueMax )
 
 	::FRow      			:= hb_DefaultValue( nRow, 0 )
 	::FColumnMin			:= hb_DefaultValue( nColumnMin, 0 )
@@ -53,7 +52,7 @@ METHOD New( nRow, nColumnMin, nColumnMax, nValueMin, nValueMax )	CLASS TProgress
   ::FCurrent        := nColumnMin + 1
 	return self
 
-METHOD PROCEDURE Display( )	CLASS TProgressBar
+METHOD PROCEDURE TProgressBar:Display( )
 
   ::FScreen := save_box( ::FRow, ::FColumnMin, ::FRow, ::FColumnMax )
   ::FScreen := .t.
@@ -72,39 +71,3 @@ METHOD PROCEDURE TProgressBar:Destroy()
 
   rest_box( ::FScreen )
   return
-
-METHOD PROCEDURE TProgressBar:setRow( nValue )
-	
-  ::FRow := nValue
-	return
-
-METHOD PROCEDURE TProgressBar:setColumnMin( nValue )
-	
-  ::FColumnMin := nValue
-	return
-
-METHOD PROCEDURE TProgressBar:setColumnMax( nValue )
-	
-  ::FColumnMax := nValue
-	return
-
-METHOD PROCEDURE TProgressBar:setValueMin( nValue )
-	
-  ::FValueMin := nValue
-	return
-
-METHOD PROCEDURE TProgressBar:setValueMax( nValue )
-	
-  ::FValueMax := nValue
-	return
-
-METHOD PROCEDURE TProgressBar:setSymbol( cSymbol )
-	
-  ::FSymbol := cSymbol
-	return
-
-METHOD PROCEDURE TProgressBar:setColor( cColor )
-	
-  ::FColor := cColor
-	return
-
