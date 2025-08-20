@@ -30,6 +30,7 @@ CREATE CLASS TProgressBar
     DATA FScreen
     DATA FSymbol      INIT chr( 176 )
     DATA FColor       INIT 'N/BG, W+/N'
+    DATA FBuf
 
     METHOD setRow( nValue )             INLINE ::FRow := nValue
     METHOD setColumnMin( nValue )       INLINE ::FColumnMIN := nValue
@@ -50,12 +51,13 @@ METHOD TProgressBar:New( nRow, nColumnMin, nColumnMax, nValueMin, nValueMax )
 	::FValueMax			  := hb_DefaultValue( nValueMax, 0 )
   ::FStep           := int( ( nValueMax - nValueMin ) / ( nColumnMax - nColumnMin - 2 ) )
   ::FCurrent        := nColumnMin + 1
+  ::FBuf            := SaveScreen( ::FRow, ::FColumnMin, ::FRow, ::FColumnMax )
 	return self
 
 METHOD PROCEDURE TProgressBar:Display( )
 
   ::FScreen := save_box( ::FRow, ::FColumnMin, ::FRow, ::FColumnMax )
-  ::FScreen := .t.
+//  ::FScreen := .t.
   @ ::FRow, ::FColumnMin SAY '[' Color ::FColor
   @ ::FRow, ::FColumnMax SAY ']' Color ::FColor
   return
