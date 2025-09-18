@@ -16,7 +16,7 @@ IMPORT static DebugMessageBox( hWnd, cMsg, cText, nFlags ) FROM user32.dll EXPOR
 // массив    - слияние строк от элементов
 // мемо      - значение
 // логическое- 'истина' или ' ложь '
-function xtoc( parm, len, dec )
+function xtoc__( parm, len, dec )
 	local t := '', ln := 0, i := 0, p := .f., ret
     ret := ''
     t = valtype( parm )
@@ -24,10 +24,10 @@ function xtoc( parm, len, dec )
         case t = 'A'
             ln = len( parm )
             for i = 1 to ln
-                ret := ret + xtoc( parm[ i ] )
+                ret := ret + xtoc__( parm[ i ] )
             next
         case t = 'B'
-            ret := xtoc( eval( parm ) )
+            ret := xtoc__( eval( parm ) )
         case t = 'C'
             ret := parm
         case t = 'D'
@@ -64,7 +64,6 @@ return ret
 */
 function AsString( xVal, descript )
 
-   LOCAL result
    local tmp
 
    switch ValType( xVal )
@@ -122,7 +121,6 @@ function AsString( xVal, descript )
          return tmp
       endif
    case 'A'
-      // tmp := '<Array>: ' + LTrim( Str( Len( xVal ) ) )
       tmp := '<Array>: ' + hb_ValToExp( xVal )
       if ! empty(descript)
          return descript + " (Array): " + tmp
@@ -149,7 +147,6 @@ function AsString( xVal, descript )
 function AlertX( param, descript )
 	
 	HB_Default( @descript, "" ) 
-	// HB_Default( @dec, 0 ) 
 	alert( AsString( param, descript ) )
 	return nil
 
