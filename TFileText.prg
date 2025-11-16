@@ -20,7 +20,7 @@ CREATE CLASS TFileText
 
     METHOD New( NameFile, width, page_break, high, num_page ) CONSTRUCTOR
     METHOD Close()
-    METHOD add_string( str, align, cFill )
+    METHOD add_string( str, align, cFill, lWordWrap )
     METHOD Add_Column( title, width, align, cFill, wrap )
     METHOD Add_Row( aRow )
     METHOD End_Table()
@@ -194,20 +194,41 @@ METHOD procedure PrintTableHeader()  CLASS TFileText
   endif
   return
 
-METHOD procedure add_string( str, align, cFill )  CLASS TFileText
+// 16.11.25
+METHOD procedure add_string( str, align, cFill, lWordWrap )  CLASS TFileText
+
+  local aStr, i
 
 	hb_default( @align, FILE_LEFT )
 	hb_default( @cFill, chr( 32 ) )
 	hb_default( @str, '' )
-  ::control_page_break()
-  if align == FILE_LEFT
-    str := padr( str, ::F_sh, cFill )
-  elseif align == FILE_RIGHT
-    str := padl( str, ::F_sh, cFill )
-  elseif align == FILE_CENTER
-    str := padc( str, ::F_sh, cFill )
+	hb_default( @lWordWrap, .f. )
+
+  aStr := ::word_wrap( str, ::F_sh )
+  if lWordWrap .and. ( len( aStr ) > 1 )
+    for i := 1 to len( aStr )
+      ::control_page_break()
+      if align == FILE_LEFT
+        str := padr( aStr[ i ], ::F_sh, cFill )
+      elseif align == FILE_RIGHT
+        str := padl( aStr[ i ], ::F_sh, cFill )
+      elseif align == FILE_CENTER
+        str := padc( aStr[ i ], ::F_sh, cFill )
+      endif
+      HB_VFWRITE( ::fp, str + hb_eol() )
+    next i
+  else
+    ::control_page_break()
+    if align == FILE_LEFT
+      str := padr( str, ::F_sh, cFill )
+    elseif align == FILE_RIGHT
+      str := padl( str, ::F_sh, cFill )
+    elseif align == FILE_CENTER
+      str := padc( str, ::F_sh, cFill )
+    endif
+    HB_VFWRITE( ::fp, str + hb_eol() )
   endif
-  HB_VFWRITE( ::fp, str + hb_eol() )
+
   return
 
 METHOD procedure End_Table()  CLASS TFileText
@@ -220,7 +241,7 @@ METHOD procedure End_Table()  CLASS TFileText
 
 METHOD function control_page_break()  CLASS TFileText
   
-  local strPage, strWrite
+  local strWrite
 
   ::F_current_line ++
   if ::F_page_break
